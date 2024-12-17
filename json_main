@@ -1,0 +1,47 @@
+import json
+import sys
+import os
+import urllib.request as ureq
+import pdb
+
+download = 1
+
+###############################################################
+######################### load dataset json file ###############
+################################################################
+
+image_path = "/home/edward/code/ni-vis/ni-mmdetection/playground/data/ocr_vqa/images"
+image_jpg = os.listdir(image_path)
+for image_element in image_jpg:
+    if image_element.endswith('jpg'):
+        print(image_element)
+
+
+with open('../llava_v1_5_mix665k.json', 'r') as fp:
+        data = json.load(fp)
+# print(data)
+# print(data['image'])
+for data_element in data:
+    #print(data_element)
+    try:
+        index = data_element['image'].find("ocr_vqa/images/")
+        if -1 != index:
+            print(data_element['image'][index:-1])
+            if data_element['image'][index:].endswith('.jpg'):
+                ocr_image_name = data_element['image'][index:]
+                print('json ocr_image_name:{}'.format(ocr_image_name))
+                for image_element in image_jpg:
+                    if image_element.endswith('jpg'):
+                        #print('dir image_element:{}'.format(image_element))
+                        
+                        if ocr_image_name == image_element:
+                            data.remove(data_element)
+                            print('dir image_element:{}'.format(image_element))
+                            
+    except KeyError:
+        #print(data_element)
+        None
+
+with open('../llava_v1_5_mix665k_no_ocr.json', 'w') as w_fp:
+    json.dump(data, w_fp)
+        
